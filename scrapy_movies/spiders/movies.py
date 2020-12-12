@@ -1,17 +1,17 @@
+import json
+
 import scrapy
 from scrapy import Request
-from scrapy.loader import ItemLoader
-
-from scrapy_movies.items import ScrapyMoviesItem
 
 
 class MoviesSpider(scrapy.Spider):
     name = 'movies'
-    allowed_domains = ['https://www1.gowatchseries.bz/search.html?keyword=SURVIVOR']
-    start_urls = ['https://www1.gowatchseries.bz/search.html?keyword=SURVIVOR']
+    allowed_domains = ['https://www1.gowatchseries.bz/search.html?keyword=DISAPPEARED']
+    start_urls = ['https://www1.gowatchseries.bz/search.html?keyword=DISAPPEARED']
+    seasons = []
 
     def parse(self, response):
-        yield Request(url='https://www1.gowatchseries.bz/search.html?keyword=SURVIVOR',
+        yield Request(url='https://www1.gowatchseries.bz/search.html?keyword=DISAPPEARED',
                       callback=self.extract_season, dont_filter=True)
 
     def extract_season(self, response):
@@ -29,9 +29,11 @@ class MoviesSpider(scrapy.Spider):
             link_nex_page = response.urljoin(nex_page)
             if str(link_nex_page) != str(response.url):
                 yield scrapy.Request(url=link_nex_page, callback=self.extract_season, dont_filter=True)
+        else:
+            with open("movies.json", "w", encoding="UTF-8") as json_file:
+                json.dump(self.seasons, json_file, indent=4)
 
-    @staticmethod
-    def extract_episode(response):
+    def extract_episode(self, response):
         list_episodes = []
         for i in response.xpath('//*[@id="left"]/div/div[3]/div[1]/div[3]/ul/li'):
             episode_name = i.xpath('a/text()').extract_first()
@@ -43,8 +45,14 @@ class MoviesSpider(scrapy.Spider):
             }
             list_episodes.append(item)
 
-        loader = ItemLoader(item=ScrapyMoviesItem(), response=response)
-        loader.add_value('link_season', response.url)
-        loader.add_value('episodes', list_episodes)
+        season = {
+            "link_season": response.url,
+            "episodes": list_episodes
+        }
+        self.seasons.append(season)
 
-        yield loader.load_item()
+        # loader = ItemLoader(item=ScrapyMoviesItem(), response=response)
+        # loader.add_value('link_season', response.url)
+        # loader.add_value('episodes', list_episodes)
+        #
+        # yield loader.load_item()
