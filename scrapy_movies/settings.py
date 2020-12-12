@@ -17,7 +17,7 @@ NEWSPIDER_MODULE = 'scrapy_movies.spiders'
 MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
 MONGODB_DB = 'movies'
-MONGODB_COLLECTION = 'movie006'
+MONGODB_COLLECTION = 'movie007'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

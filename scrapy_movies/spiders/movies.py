@@ -2,6 +2,9 @@ import json
 
 import scrapy
 from scrapy import Request
+from scrapy.loader import ItemLoader
+
+from scrapy_movies.items import ScrapyMoviesItem
 
 
 class MoviesSpider(scrapy.Spider):
@@ -51,8 +54,8 @@ class MoviesSpider(scrapy.Spider):
         }
         self.seasons.append(season)
 
-        # loader = ItemLoader(item=ScrapyMoviesItem(), response=response)
-        # loader.add_value('link_season', response.url)
-        # loader.add_value('episodes', list_episodes)
-        #
-        # yield loader.load_item()
+        loader = ItemLoader(item=ScrapyMoviesItem(), response=response)
+        loader.add_value('link_season', response.url)
+        loader.add_value('episodes', list_episodes)
+
+        yield loader.load_item()
