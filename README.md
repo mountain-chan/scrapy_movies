@@ -4,9 +4,7 @@ crawler website by scrapy in python
 Environment: python 3.7
 
 ## Update Proxy list
-Step1: get file list-proxy on https://github.com/clarketm/proxy-list/blob/master/proxy-list.txt to update proxy list
-
-Step2: run file update_us_proxy.py to get only us proxy 
+update proxy list in file us_proxy.txt
 
 
 ## create project scrapy
@@ -17,4 +15,4 @@ scrapy genspider movies https://www1.gowatchseries.bz/search.html?keyword=DISAPP
 scrapy shell https://www1.gowatchseries.bz/search.html?keyword=DISAPPEARED
 
 ## Start crawl data
-scrapy crawl movies
+run main.py

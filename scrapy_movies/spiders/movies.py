@@ -2,23 +2,35 @@ import json
 
 import scrapy
 from scrapy import Request
-from scrapy.loader import ItemLoader
-
-from scrapy_movies.items import ScrapyMoviesItem
+from scrapy.crawler import CrawlerProcess
 
 
 class MoviesSpider(scrapy.Spider):
     name = 'movies'
-    allowed_domains = ['https://www1.gowatchseries.bz/search.html?keyword=DISAPPEARED']
-    start_urls = ['https://www1.gowatchseries.bz/search.html?keyword=DISAPPEARED']
+    custom_settings = {
+        "DOWNLOADER_MIDDLEWARES": {
+            # ...
+            'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
+            'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
+            # ...
+        },
+        "ROTATING_PROXY_LIST_PATH": "us_proxy.txt"
+    }
+
+    # init movies.json
+    with open("movies.json", "w", encoding="UTF-8") as json_file:
+        json.dump([], json_file, indent=4)
+
+    # get parameter
+    with open("parameter.json") as f:
+        parameter = json.load(f)
+    keyword = parameter["keyword"]
+
+    allowed_domains = ['https://www1.gowatchseries.bz']
+    start_urls = ['https://www1.gowatchseries.bz/search.html?keyword=%s' % keyword]
 
     def parse(self, response):
-        # delete old movie
-        with open("movies.json", "w", encoding="UTF-8") as json_file:
-            json.dump([], json_file, indent=4)
-
-        yield Request(url='https://www1.gowatchseries.bz/search.html?keyword=DISAPPEARED',
-                      callback=self.extract_season, dont_filter=True)
+        yield Request(url=self.start_urls[0], callback=self.extract_season, dont_filter=True)
 
     def extract_season(self, response):
 
@@ -59,7 +71,11 @@ class MoviesSpider(scrapy.Spider):
             file.seek(0)
             json.dump(data, file, indent=4)
 
-        # loader = ItemLoader(item=ScrapyMoviesItem(), response=response)
-        # loader.add_value('link_season', response.url)
-        # loader.add_value('episodes', list_episodes)
-        # yield loader.load_item()
+
+if __name__ == '__main__':
+    """
+    Start crawl movies
+    """
+    process = CrawlerProcess()
+    process.crawl(MoviesSpider)
+    process.start()
