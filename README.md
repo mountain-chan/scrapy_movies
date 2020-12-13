@@ -3,7 +3,10 @@ crawler website by scrapy in python
 
 Environment: python 3.7
 
-## Fake IP by VPN to US - Los Angeles
+## Update Proxy list
+Step1: get file list-proxy on https://github.com/clarketm/proxy-list/blob/master/proxy-list.txt to update proxy list
+
+Step2: run file update_us_proxy.py to get only us proxy 
 
 
 ## create project scrapy

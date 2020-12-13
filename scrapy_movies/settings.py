@@ -68,7 +68,7 @@ DOWNLOADER_MIDDLEWARES = {
     # ...
 }
 
-ROTATING_PROXY_LIST_PATH = 'scrapy_movies/proxy-list.txt'
+ROTATING_PROXY_LIST_PATH = 'us_proxy.txt'
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

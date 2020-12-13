@@ -11,9 +11,12 @@ class MoviesSpider(scrapy.Spider):
     name = 'movies'
     allowed_domains = ['https://www1.gowatchseries.bz/search.html?keyword=DISAPPEARED']
     start_urls = ['https://www1.gowatchseries.bz/search.html?keyword=DISAPPEARED']
-    seasons = []
 
     def parse(self, response):
+        # delete old movie
+        with open("movies.json", "w", encoding="UTF-8") as json_file:
+            json.dump([], json_file, indent=4)
+
         yield Request(url='https://www1.gowatchseries.bz/search.html?keyword=DISAPPEARED',
                       callback=self.extract_season, dont_filter=True)
 
@@ -32,11 +35,9 @@ class MoviesSpider(scrapy.Spider):
             link_nex_page = response.urljoin(nex_page)
             if str(link_nex_page) != str(response.url):
                 yield scrapy.Request(url=link_nex_page, callback=self.extract_season, dont_filter=True)
-        else:
-            with open("movies.json", "w", encoding="UTF-8") as json_file:
-                json.dump(self.seasons, json_file, indent=4)
 
-    def extract_episode(self, response):
+    @staticmethod
+    def extract_episode(response):
         list_episodes = []
         for i in response.xpath('//*[@id="left"]/div/div[3]/div[1]/div[3]/ul/li'):
             episode_name = i.xpath('a/text()').extract_first()
@@ -52,10 +53,13 @@ class MoviesSpider(scrapy.Spider):
             "link_season": response.url,
             "episodes": list_episodes
         }
-        self.seasons.append(season)
+        with open("movies.json", "r+") as file:
+            data = list(json.load(file))
+            data.append(season)
+            file.seek(0)
+            json.dump(data, file, indent=4)
 
-        loader = ItemLoader(item=ScrapyMoviesItem(), response=response)
-        loader.add_value('link_season', response.url)
-        loader.add_value('episodes', list_episodes)
-
-        yield loader.load_item()
+        # loader = ItemLoader(item=ScrapyMoviesItem(), response=response)
+        # loader.add_value('link_season', response.url)
+        # loader.add_value('episodes', list_episodes)
+        # yield loader.load_item()
