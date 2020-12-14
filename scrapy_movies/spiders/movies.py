@@ -7,15 +7,17 @@ from scrapy.crawler import CrawlerProcess
 
 class MoviesSpider(scrapy.Spider):
     name = 'movies'
-    custom_settings = {
-        "DOWNLOADER_MIDDLEWARES": {
-            # ...
-            'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
-            'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
-            # ...
-        },
-        "ROTATING_PROXY_LIST_PATH": "us_proxy.txt"
-    }
+
+    # # enable custom_settings if use proxy list
+    # custom_settings = {
+    #     "DOWNLOADER_MIDDLEWARES": {
+    #         # ...
+    #         'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
+    #         'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
+    #         # ...
+    #     },
+    #     "ROTATING_PROXY_LIST_PATH": "us_proxy.txt"
+    # }
 
     # init movies.json
     with open("movies.json", "w", encoding="UTF-8") as json_file:
@@ -26,7 +28,7 @@ class MoviesSpider(scrapy.Spider):
         parameter = json.load(f)
     keyword = parameter["keyword"]
 
-    allowed_domains = ['https://www1.gowatchseries.bz']
+    allowed_domains = ['gowatchseries.bz']
     start_urls = ['https://www1.gowatchseries.bz/search.html?keyword=%s' % keyword]
 
     def parse(self, response):
@@ -72,10 +74,6 @@ class MoviesSpider(scrapy.Spider):
             json.dump(data, file, indent=4)
 
 
-if __name__ == '__main__':
-    """
-    Start crawl movies
-    """
-    process = CrawlerProcess()
-    process.crawl(MoviesSpider)
-    process.start()
+# init process crawl
+process = CrawlerProcess()
+process.crawl(MoviesSpider)

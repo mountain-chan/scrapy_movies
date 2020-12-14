@@ -1,5 +1,6 @@
 import json
-import subprocess
+
+from scrapy_movies.spiders.movies import process
 
 
 def crawl_movie(keyword):
@@ -11,8 +12,7 @@ def crawl_movie(keyword):
         json.dump(parameters, f, indent=4)
 
     # run scraper
-    process = subprocess.Popen('python scrapy_movies/spiders/movies.py', shell=True)
-    process.wait()
+    process.start()
 
     # get data from movies file
     with open("movies.json") as f:
@@ -27,4 +27,4 @@ if __name__ == '__main__':
     """
     Start crawl movies with keyword
     """
-    crawl_movie("STAR TREK: VOYAGER")
+    crawl_movie("DISAPPEARED")
