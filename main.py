@@ -27,4 +27,4 @@ if __name__ == '__main__':
     """
     Start crawl movies with keyword
     """
-    crawl_movie("DISAPPEARED")
+    crawl_movie("diners")

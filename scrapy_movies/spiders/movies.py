@@ -54,7 +54,7 @@ class MoviesSpider(scrapy.Spider):
     def extract_episode(response):
         list_episodes = []
         for i in response.xpath('//*[@id="left"]/div/div[3]/div[1]/div[3]/ul/li'):
-            episode_name = i.xpath('a/text()').extract_first()
+            episode_name = i.xpath('a/h4/text()').extract_first()
             link_episode = i.xpath('a/@href').extract_first()
             link_episode = response.urljoin(link_episode)
             item = {
